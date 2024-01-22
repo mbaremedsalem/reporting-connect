@@ -15,7 +15,7 @@ from rest_framework.views import APIView
 from .models import *
 import random
 from rest_framework.permissions import AllowAny
-
+from django.contrib.auth.hashers import make_password
 
 #-------------------login---------------------
 class InvalidInformationException(APIException):
@@ -83,3 +83,15 @@ class RegisterAPI(TokenObtainPairView):
             # Log the exception for debugging purposes
             print(f"Exception during user registration: {e}")
             return Response({'status': status.HTTP_400_BAD_REQUEST, 'message': 'Bad request'})  
+        
+class UpdatePassword(TokenObtainPairView):
+    def put(self, request):
+        phone=request.data['phone']
+        password=make_password(request.data['password'])
+        try:
+            user=UserAub.objects.get(phone=phone)
+        except:
+            return Response({'message':'Ultilisateur ne existe pas'})
+        user.password=password
+        user.save()
+        return Response({'message':'Success'})        
