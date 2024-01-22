@@ -30,8 +30,9 @@ class Mytoken(TokenObtainPairView):
         try:
             serializer.is_valid(raise_exception=True)
         except ValidationError as e:
+            # Extract the error message from the first element of the list
             return Response({
-            'message': str(e),
+            'message': 'information invalide',
             'status':status.HTTP_400_BAD_REQUEST, 
         })
             
