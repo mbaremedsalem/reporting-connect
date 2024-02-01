@@ -1,0 +1,47 @@
+DECLARE
+    l_http_request   UTL_HTTP.req;
+    l_http_response  UTL_HTTP.resp;
+    l_url            VARCHAR2(2000);
+    l_token          VARCHAR2(200);
+    l_request_body   CLOB;
+    l_response_body  CLOB;
+BEGIN
+    -- Appel à la première API pour obtenir le token
+    l_url := 'https://reporting.bcm.mr/authenticate/login';
+    l_request_body := '{"banque":"AUB","password":"ba@#1!8?-34b"}';
+
+    UTL_HTTP.SET_BODY_CHARSET('UTF-8');
+    l_http_request := UTL_HTTP.BEGIN_REQUEST(url => l_url, method => 'POST');
+    UTL_HTTP.SET_HEADER(l_http_request, 'Content-Type', 'application/json');
+    UTL_HTTP.SET_BODY(l_http_request, l_request_body);
+    l_http_response := UTL_HTTP.GET_RESPONSE(l_http_request);
+
+    UTL_HTTP.READ_TEXT(l_http_response, l_response_body);
+    UTL_HTTP.END_RESPONSE(l_http_response);
+
+    -- Extraction du token de la réponse
+    l_token := JSON_VALUE(l_response_body, '$.token');
+
+    -- Appel à la deuxième API avec le token
+    l_url := 'https://reporting.bcm.mr/FluxEntrants_PeriodiciteQuotidienne';
+    l_request_body := '[{"banque":"string","referenceTransaction":"string","dateTransaction":"2024-01-15T16:42:20.351Z","typeSwfit":"string","modeReglement":"string","devise":"string","montantTransaction":0,"tauxDeChange":0,"nomDonneurOrdre":"string","nifNni":"string","beneficiaire":"string","produit":"string","natureEconomique":"string","pays":"string"}]';
+
+    l_http_request := UTL_HTTP.BEGIN_REQUEST(url => l_url, method => 'POST');
+    UTL_HTTP.SET_HEADER(l_http_request, 'Content-Type', 'application/json');
+    UTL_HTTP.SET_HEADER(l_http_request, 'Authorization', 'Bearer ' || l_token);
+    UTL_HTTP.SET_BODY(l_http_request, l_request_body);
+    l_http_response := UTL_HTTP.GET_RESPONSE(l_http_request);
+
+    -- Vérification de la réponse
+    IF UTL_HTTP.RESP_STATUS_CODE(l_http_response) = 200 THEN
+        DBMS_OUTPUT.PUT_LINE('OK');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Erreur : ' || UTL_HTTP.RESP_STATUS_CODE(l_http_response));
+    END IF;
+
+    UTL_HTTP.END_RESPONSE(l_http_response);
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('Erreur : ' || SQLERRM);
+END;
+/
