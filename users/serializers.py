@@ -40,10 +40,32 @@ class MyTokenObtainPairSerializer(serializers.Serializer):
             raise serializers.ValidationError({'message':'Informations invalides.'})  
         
 
-class RegisterSerializer(serializers.ModelSerializer):
+
+
+## register Etudiant 
+class RegisterCaissierSerializer(serializers.ModelSerializer):
     class Meta:
-        model = UserAub
-        fields = ('firstname','username','lastname','post','phone','email','password')
+        model = Caissier
+        fields = ('id', 'phone','firstname','lastname','username','post','email', 'password','role')
         extra_kwargs = {
             'password': {'write_only': True}
-        } 
+        }
+
+class RegisterChefAgenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChefAgence
+        fields = ('id', 'phone','firstname','lastname','username','post','email', 'password','role')
+        extra_kwargs = {
+            'password': {'write_only': True}
+        }
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ('name', 'job')        
+
+class chequeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = cheque
+        # Remplacez 'direction' par 'direction_nom' dans les champs
+        fields = ('id','numero_de_compte', 'code_agence', 'Nbre_carnet','Nbre_feuilles','code_transaction', 'nom_client', 'adresse','Code_Devise','code_bank','code_pays','numero_de_debut')        

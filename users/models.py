@@ -8,6 +8,11 @@ def image_uoload_profile_agent(instance,filname):
     imagename,extention =  filname.split(".")
     return "user/%s.%s"%(instance.id,extention)
 
+Role=(
+    ('Caissier', 'Caissier'),
+    ('ChefAgence', 'ChefAgence'),
+)  
+
 class UserAub(AbstractBaseUser,PermissionsMixin):
     firstname = models.CharField(max_length=50,blank=True)
     lastname = models.CharField(max_length=50,blank=True)
@@ -15,7 +20,7 @@ class UserAub(AbstractBaseUser,PermissionsMixin):
     username = models.CharField(max_length=16,unique=True,null=True)
     email = models.EmailField(max_length=50,blank=True)
     post = models.CharField(max_length=200,null=True)
-    image=models.ImageField(upload_to=image_uoload_profile_agent ,null=True,blank=True) 
+    role= models.CharField(max_length=30, choices=Role, default='Caissier')
     is_active = models.BooleanField(default=True)
     verified = models.BooleanField(default=False)
     restricted = models.BooleanField(default=False)
@@ -32,6 +37,19 @@ class UserAub(AbstractBaseUser,PermissionsMixin):
 
     def __str__(self): 
         return self.username or "N/A"
+    
+def image_uoload_profile(instance,filname):
+    imagename,extention =  filname.split(".")
+    return "user/%s.%s"%(instance.id,extention)    
+
+class Caissier(UserAub):
+    image=models.ImageField(upload_to=image_uoload_profile ,null=True)
+    def __str__(self): 
+        return self.phone 
+        
+#--------manager -----------
+class ChefAgence(UserAub):
+    image=models.ImageField(upload_to=image_uoload_profile ,null=True)       
     
 class Agence(models.Model):
     AGENCE = models.CharField(max_length=5, unique=True, blank=True, null=True)
@@ -149,16 +167,25 @@ class Demchq(models.Model):
         return self.LIBELLE or "N/A"
 
 
+class UserProfile(models.Model):
+    name = models.CharField(max_length=100)
+    job = models.CharField(max_length=100)
 
+class cheque(models.Model):
+    numero_de_compte =  models.CharField(max_length=100,blank=True, null=True)
+    code_agence = models.CharField(max_length=5,blank=True, null=True)
+    Nbre_carnet = models.CharField(max_length=1,blank=True, null=True)
+    Nbre_feuilles = models.CharField(max_length=100, blank=True, null=True)
+    code_transaction = models.CharField(max_length=2,blank=True, null=True)
+    nom_client = models.CharField(max_length=100,blank=True, null=True)
+    adresse = models.CharField(max_length=100,blank=True, null=True)
+    Code_Devise = models.CharField(max_length=30,blank=True, null=True)
+    code_bank = models.CharField(max_length=100,blank=True, null=True)
+    code_pays = models.CharField(max_length=10,blank=True, null=True)
+    numero_de_debut = models.CharField(max_length=7,blank=True, null=True)
 
-
-
-    
-    
-
-
-
-
+    def __str__(self): 
+        return self.numero_de_compte or "N/A"
 
 
 

@@ -16,7 +16,7 @@ from .models import *
 import random
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.hashers import make_password
-
+from django.core.mail import send_mail
 #-------------------login---------------------
 class InvalidInformationException(APIException):
     status_code = 400
@@ -38,7 +38,6 @@ class Mytoken(TokenObtainPairView):
             
         user = serializer.validated_data
         refresh = RefreshToken.for_user(user)
-        image_url = user.image.url if user.image else None
         return Response({
             'message': 'login success',
             'status':status.HTTP_200_OK, 
@@ -49,42 +48,57 @@ class Mytoken(TokenObtainPairView):
             'phone': user.phone,
             'username': user.username,
             'post': user.post,
-            'image':image_url,
+            'role': user.role,
             'access': str(refresh.access_token),
             'refresh_token': str(refresh),  
         })
     
 class RegisterAPI(TokenObtainPairView):
-    serializer_class = RegisterSerializer
+    serializer_classes = {
+        'Caissier': RegisterCaissierSerializer,
+        'ChefAgence': RegisterChefAgenceSerializer
+    }
+
+    def get_serializer_class(self):
+        role = self.request.data.get('role', False)
+        serializer_class = self.serializer_classes.get(role)
+        return serializer_class
 
     def post(self, request, *args, **kwargs):
-        phone = request.data.get('username', None)
-        password = request.data.get('password', None)
+        phone = request.data.get('phone', False)
+        password = request.data.get('password', False)
+        role = request.data.get('role', False)
 
-        if phone is None or password is None:
-            return Response({'status': status.HTTP_400_BAD_REQUEST, 'message': 'Envoyez le username et le mdp'})
+        if phone and password and role:
+            serializer_class = self.get_serializer_class()
+            if serializer_class is None:
+                return Response({'status': status.HTTP_400_BAD_REQUEST, 'Message': 'Invalid role'})
 
-        try:
-            serializer = self.get_serializer(data=request.data)
+            serializer = serializer_class(data=request.data)
             serializer.is_valid(raise_exception=True)
 
-            user = serializer.save()
-            user.set_password(password)
-            user.save()
+            try:
+                user = serializer.save()
+                user.set_password(password)
+                user.save()
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'firstname': user.firstname,
+                    'lastname': user.lastname,
+                    'phone':user.phone,
+                    'username':user.username,
+                    'email':user.email,
+                    'post':user.post,
+                    'role': user.role,
+                    'token': str(refresh.access_token),
+                    'refresh_token': str(refresh)
+                })
+            except:
+                return Response({'status': status.HTTP_400_BAD_REQUEST, 'Message': 'Bad request'})
 
-            refresh = RefreshToken.for_user(user)
+        return Response({'status': status.HTTP_400_BAD_REQUEST, 'Message': 'Envoyez le numéro de telephone exist'})
 
-            return Response({
-                'user': UserSerializer(user, context=self.get_serializer_context()).data,
-                'token': str(refresh.access_token),
-                'refresh_token': str(refresh)
-            })
 
-        except Exception as e:
-            # Log the exception for debugging purposes
-            print(f"Exception during user registration: {e}")
-            return Response({'status': status.HTTP_400_BAD_REQUEST, 'message': 'Bad request'})  
-        
 class UpdatePassword(TokenObtainPairView):
     def put(self, request):
         phone=request.data['phone']
@@ -96,3 +110,26 @@ class UpdatePassword(TokenObtainPairView):
         user.password=password
         user.save()
         return Response({'message':'Success'})        
+    
+
+class SendEmailView(APIView):
+    def post(self, request):
+        serializer = UserProfileSerializer(data=request.data)
+        if serializer.is_valid():
+            name = serializer.validated_data['name']
+            job = serializer.validated_data['job']
+            # Send email
+            subject = 'New Job Application'
+            message = f'Name: {name}\nJob: {job}'
+            recipient_list = [settings.EMAIL_HOST_USER]
+            send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
+            
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+    
+class getChequeView(APIView):
+    def get(self, request):
+        # Récupérez tous les documents
+        demchq = cheque.objects.all()
+        serializer = chequeSerializer(demchq, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)      

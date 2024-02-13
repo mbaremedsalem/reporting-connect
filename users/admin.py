@@ -89,23 +89,62 @@ class ClientAdmin(ImportExportModelAdmin):
   
 class UserAdminConfig(admin.ModelAdmin):
     model = UserAub
-    search_fields = ('email','firstname','phone','lastname','post','image','username')
-    list_filter = ('email','firstname','phone','lastname','post','image','username','is_active', 'is_staff',)
+    search_fields = ('email','firstname','phone','lastname','post','username')
+    list_filter = ('email','firstname','phone','lastname','post','username','is_active', 'is_staff',)
     ordering = ('firstname',)  # Update the ordering field here
-    list_display = ('email','firstname','phone','lastname','post','image','username','is_superuser',
+    list_display = ('email','firstname','phone','lastname','post','username','is_superuser',
                     'is_active', 'is_staff','is_blocked','password',)
     fieldsets = (
-        (None, {'fields': ('email','firstname','phone','lastname','post','image','username')}),
+        (None, {'fields': ('email','firstname','phone','lastname','post','username')}),
         ('Permissions', {'fields': ('is_staff', 'is_active', 'is_blocked')}),
     )
 
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email','firstname','phone','lastname','post','image','username','is_active','is_staff','is_blocked')
+            'fields': ('email','firstname','phone','lastname','post','username','is_active','is_staff','is_blocked')
             }
          ),
     )
 
 admin.site.register(UserAub, UserAdminConfig)    
 
+admin.site.register(Caissier)    
+
+admin.site.register(ChefAgence) 
+
+# Your import logic here, using agence_instance as needed
+
+class chequeResource(resources.ModelResource):
+    class Meta:
+        model = cheque
+
+class chequeForm(forms.ModelForm):
+    class Meta:
+        model = cheque
+        fields = '__all__'
+
+@admin.register(cheque)
+class chequeAdmin(ImportExportModelAdmin):
+    resource_class = chequeResource
+    search_fields = ['numero_de_compte']
+    list_display = ('id','numero_de_compte' ,'code_agence' ,'Nbre_carnet' ,'Nbre_feuilles',  
+                'code_transaction' ,'nom_client', 'adresse', 'Code_Devise' ,'code_bank' ,'code_pays' ,
+                'numero_de_debut' 
+                    )
+    form = chequeForm
+        # Rendre le champ 'id' éditable
+    readonly_fields = ('id',)
+    fieldsets = [
+        (None, {'fields': ('id','numero_de_compte' ,'code_agence' ,'Nbre_carnet' ,'Nbre_feuilles',  
+                'code_transaction' ,'nom_client', 'adresse', 'Code_Devise' ,'code_bank' ,'code_pays' ,
+                'numero_de_debut' 
+                            )}),
+    ]
+    readonly_fields = ('id',)
+    fieldsets = [
+        (None, {'fields': ('id','numero_de_compte' ,'code_agence' ,'Nbre_carnet' ,'Nbre_feuilles',  
+                'code_transaction' ,'nom_client', 'adresse', 'Code_Devise' ,'code_bank' ,'code_pays' ,
+                'numero_de_debut' 
+                            )}),
+    ]
