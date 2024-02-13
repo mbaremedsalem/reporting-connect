@@ -113,6 +113,7 @@ admin.site.register(Caissier)
 
 admin.site.register(ChefAgence) 
 
+admin.site.register(UserProfile) 
 # Your import logic here, using agence_instance as needed
 
 class chequeResource(resources.ModelResource):

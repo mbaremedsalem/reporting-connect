@@ -62,8 +62,8 @@ class RegisterChefAgenceSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('name', 'job')        
-
+        fields = ('name', 'subj','file')        
+ 
 class chequeSerializer(serializers.ModelSerializer):
     class Meta:
         model = cheque

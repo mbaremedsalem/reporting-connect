@@ -1,3 +1,4 @@
+import os
 from django.db import models
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.auth.base_user import AbstractBaseUser
@@ -166,10 +167,15 @@ class Demchq(models.Model):
     def __str__(self): 
         return self.LIBELLE or "N/A"
 
+def uoload_document(instance, filname):
+    extention = os.path.splitext(filname)[1]
+    unique_filename = f"{instance.id}{extention}"
+    return os.path.join("cheque", unique_filename) 
 
 class UserProfile(models.Model):
-    name = models.CharField(max_length=100)
-    job = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,blank=True, null=True)
+    subj = models.CharField(max_length=100,blank=True, null=True)
+    file = models.FileField(upload_to =uoload_document,blank=True, null=True)
 
 class cheque(models.Model):
     numero_de_compte =  models.CharField(max_length=100,blank=True, null=True)

@@ -16,7 +16,8 @@ from .models import *
 import random
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.hashers import make_password
-from django.core.mail import send_mail
+from django.core.mail import send_mail,EmailMessage
+
 #-------------------login---------------------
 class InvalidInformationException(APIException):
     status_code = 400
@@ -117,15 +118,27 @@ class SendEmailView(APIView):
         serializer = UserProfileSerializer(data=request.data)
         if serializer.is_valid():
             name = serializer.validated_data['name']
-            job = serializer.validated_data['job']
-            # Send email
-            subject = 'New Job Application'
-            message = f'Name: {name}\nJob: {job}'
-            recipient_list = [settings.EMAIL_HOST_USER]
-            send_mail(subject, message, settings.EMAIL_HOST_USER, recipient_list)
-            
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+            subj = serializer.validated_data['subj']
+            file = serializer.validated_data['file']
+
+            try:
+                # Attach the file to the email
+                email = EmailMessage(
+                    subject='Nouveau Cheque',
+                    body=f'Name: {name}\nSubject: {subj}',
+                    from_email=settings.EMAIL_HOST_USER,
+                    to=[settings.EMAIL_HOST_USER]
+                )
+                # Attach the file to the email
+                email.attach(file.name, file.read(), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+
+                # Send the email
+                email.send()
+
+                return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class getChequeView(APIView):
     def get(self, request):
