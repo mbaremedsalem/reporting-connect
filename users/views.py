@@ -129,8 +129,12 @@ class SendEmailView(APIView):
                     from_email=settings.EMAIL_HOST_USER,
                     to=[settings.EMAIL_HOST_USER]
                 )
+                
+                # Read the file content
+                file_content = file.read()
+
                 # Attach the file to the email
-                email.attach(file.name, file.read(), 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+                email.attach(file.name, file_content, 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
                 # Send the email
                 email.send()

@@ -59,10 +59,14 @@ class RegisterChefAgenceSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
 
-class UserProfileSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = UserProfile
-        fields = ('name', 'subj','file')        
+# class UserProfileSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = UserProfile
+#         fields = ('name', 'subj','file')   
+class UserProfileSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    subj = serializers.CharField()
+    file = serializers.FileField()             
  
 class chequeSerializer(serializers.ModelSerializer):
     class Meta:
