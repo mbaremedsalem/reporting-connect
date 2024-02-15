@@ -127,7 +127,7 @@ class SendEmailView(APIView):
                     subject='Nouveau Cheque',
                     body=f'Name: {name}\nSubject: {subj}',
                     from_email=settings.EMAIL_HOST_USER,
-                    to=[settings.EMAIL_HOST_USER]
+                    to=['killermbare@gmail.com']  # Set the receiver email here
                 )
                 
                 # Read the file content
