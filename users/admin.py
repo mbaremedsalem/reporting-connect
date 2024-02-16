@@ -36,48 +36,17 @@ class AgenceAdmin(ImportExportModelAdmin):
 
 class DemchqForm(forms.ModelForm):
     class Meta:
-        model = Demchq
+        model = DemChq
         fields = '__all__'
 
 class DemchqResource(resources.ModelResource):
     class Meta:
-        model = Demchq
+        model = DemChq
 
-@admin.register(Demchq)
+@admin.register(DemChq)
 class DemchqAdmin(ImportExportModelAdmin):
     resource_class = DemchqResource
     search_fields = ['CLIENT']
-    list_display = ('id','CLIENT' ,'COMPTE' ,'DEVISE' ,'RESID', 'NCG', 
-                'LIBELLE' ,'NBRCHQ', 'TYPCHQ', 'ADRL1' ,'ADRNAT' ,'ADRL2' ,
-                'ADRNO' ,'ADRL3' ,'ADRL4' ,'ADRL5' ,'DATDEM' ,'DATEDDEM', 
-                'DATREDEM' ,'DATREMCL' ,'DATMAJ' ,'REFER1' ,'REFER2' ,'NBRSOU' ,
-                'CLERIB' ,'CHQREM' ,'CHQRES' ,'ADRL6','INSTR' ,'ANNUL' ,'DATDES' ,
-                'CHQDET' ,'STATE' ,'VALIDE' ,'EXPL' ,'XCIRCUL' ,'XEXPED' ,'CORCLI' ,
-                'CORADRNO' ,'NSERLOT' ,'DELAI' ,'NATDEM' ,'CREMDEM' ,'CREMEFF' ,
-                'XAVIS' ,'XPRIOR' ,'XRENOUV' ,'XTOPE' ,'EXPLVALID','DATVALID' ,
-                'NOOPER' ,'DADRNO' ,'DADRNAT','DADRL1' ,'DADRL2' ,'DADRL3' ,
-                'DADRL4','DADRL5' ,'DADRL6' ,'CIRCULANT' ,'RENOUVNBR' ,'DATHDEM' ,
-                'TYPRUE','TYPIMM1' ,'TYPIMM2' ,'CODPOST' ,'DCODPOST','DTYPRUE' ,
-                'DTYPIMM1' ,'DTYPIMM2','DNUMRUE' ,'NUMRUE' ,
-                    )
-    form = DemchqForm
-        # Rendre le champ 'id' éditable
-    readonly_fields = ('id',)
-    fieldsets = [
-        (None, {'fields': ('id','CLIENT' ,'COMPTE' ,'DEVISE' ,'RESID', 'NCG', 
-                'LIBELLE' ,'NBRCHQ', 'TYPCHQ', 'ADRL1' ,'ADRNAT' ,'ADRL2' ,
-                'ADRNO' ,'ADRL3' ,'ADRL4' ,'ADRL5' ,'DATDEM' ,'DATEDDEM', 
-                'DATREDEM' ,'DATREMCL' ,'DATMAJ' ,'REFER1' ,'REFER2' ,'NBRSOU' ,
-                'CLERIB' ,'CHQREM' ,'CHQRES' ,'ADRL6','INSTR' ,'ANNUL' ,'DATDES' ,
-                'CHQDET' ,'STATE' ,'VALIDE' ,'EXPL' ,'XCIRCUL' ,'XEXPED' ,'CORCLI' ,
-                'CORADRNO' ,'NSERLOT' ,'DELAI' ,'NATDEM' ,'CREMDEM' ,'CREMEFF' ,
-                'XAVIS' ,'XPRIOR' ,'XRENOUV' ,'XTOPE' ,'EXPLVALID','DATVALID' ,
-                'NOOPER' ,'DADRNO' ,'DADRNAT','DADRL1' ,'DADRL2' ,'DADRL3' ,
-                'DADRL4','DADRL5' ,'DADRL6' ,'CIRCULANT' ,'RENOUVNBR' ,'DATHDEM' ,
-                'TYPRUE','TYPIMM1' ,'TYPIMM2' ,'CODPOST' ,'DCODPOST','DTYPRUE' ,
-                'DTYPIMM1' ,'DTYPIMM2','DNUMRUE' ,'NUMRUE' ,
-                            )}),
-    ]
 
 # Your import logic here, using agence_instance as needed
 @admin.register(Client)
