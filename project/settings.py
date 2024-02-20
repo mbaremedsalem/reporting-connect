@@ -33,7 +33,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'import_export',
-    'django.contrib.admin',
+    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
-    'users',
     'corsheaders',
+    'users',
     
 ]
 
@@ -57,7 +57,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",  # Add your Angular app's origin
+    "http://192.168.10.15:81",  # Add your Angular app's origin
     # You can add more origins as needed
 ]
 
@@ -106,13 +106,22 @@ WSGI_APPLICATION = 'project.wsgi.application'
 #     }
 # }
 
+#DATABASES = {
+ #   'default': {
+    #    'ENGINE': 'django.db.backends.oracle',
+     #   'NAME': '192.168.11.11/EXPPRE', 
+      #  'USER': 'aubpre',
+       # 'PASSWORD': 'PRE_57',
+        #'PORT': '1521',
+    #}
+#}
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.oracle',
-        'NAME': '192.168.11.11/EXPPRE', 
-        'USER': 'aubpre',
-        'PASSWORD': 'PRE_57',
-        'PORT': '1521',
+        'NAME': '172.16.3.71:1521/TEST',
+        'USER': 'aubtst',
+        'PASSWORD': 'aub',        
     }
 }
 
@@ -176,11 +185,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES':(
-        'rest_framework.permissions.IsAuthenticated',
+        #'rest_framework.permissions.IsAuthenticated',
     ),
 
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        #'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
 }
 

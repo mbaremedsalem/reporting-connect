@@ -52,49 +52,72 @@ class Caissier(UserAub):
 class ChefAgence(UserAub):
     image=models.ImageField(upload_to=image_uoload_profile ,null=True)       
     
-class Agence(models.Model):
-    AGENCE = models.CharField(max_length=5, unique=True, blank=True, null=True)
-    AGENCELIB = models.CharField(max_length=200,blank=True,null=True) 
-    TXFRAIS = models.CharField(max_length=200,blank=True,null=True)
-    TXCOMMV = models.CharField(max_length=6,blank=True,null=True)
-    CLIMIN = models.CharField(max_length=6,blank=True,null=True)
-    CLIMAX = models.CharField(max_length=6,blank=True,null=True)
-    CLIATTR = models.CharField(max_length=6,blank=True,null=True)
-    CLIENT = models.CharField(max_length=6,blank=True,null=True)
-    ADRNO = models.CharField(max_length=200,blank=True,null=True)
-    VILLE = models.CharField(max_length=100,blank=True,null=True)
-    CONNECTE = models.CharField(max_length=3,blank=True,null=True)
-    AGCPTA = models.CharField(max_length=100,blank=True,null=True)
-    AGCOUR = models.CharField(max_length=100,blank=True,null=True)
-    IMPRAVIS = models.CharField(max_length=60,blank=True,null=True)
-    IMPRETAT = models.CharField(max_length=60,blank=True,null=True)
-    IBATAVIS = models.CharField(max_length=60,blank=True,null=True)
-    IBATETAT = models.CharField(max_length=60,blank=True,null=True)
-    IBATREL = models.CharField(max_length=60,blank=True,null=True)
-    IMPRMATR = models.CharField(max_length=60,blank=True,null=True)
-    IBATMATR = models.CharField(max_length=60,blank=True,null=True)
-    SYS_CREATED_BY = models.CharField(max_length=60,blank=True,null=True)
-    SYS_UPDATED_DATE = models.CharField(max_length=60,blank=True,null=True)
-    SYS_UPDATED_BY = models.CharField(max_length=60,blank=True,null=True)
-    SYS_VERSION_NUMBER = models.CharField(max_length=60,blank=True,null=True)
-    SYS_CREATED_DATE = models.CharField(max_length=60,blank=True,null=True)
-    CLIAGP = models.CharField(max_length=60,blank=True,null=True)
-    def __str__(self): 
-        return self.AGENCELIB or "G/A"
+
 
     
 class Client(models.Model):
-    id = models.AutoField(primary_key=True)
-    CODE_RACINE = models.CharField(max_length=6, unique=True, blank=True, null=True)
-    CODE_AGENCE = models.ForeignKey(Agence, on_delete=models.CASCADE, to_field='AGENCE',blank=True,null=True)
-    NOM = models.CharField(max_length=200, blank=True, null=True)
-    def __str__(self): 
-        return self.NOM or "C/A"
-    
-from django.db import models
+    CODE_RACINE = models.CharField(max_length=255, primary_key=True)
+    CODE_AGENCE = models.CharField(max_length=255)
+    NOM = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'CLIENT'
+
+class Agence(models.Model):
+    AGENCE = models.CharField(max_length=255)
+    AGENCELIB = models.CharField(max_length=255)
+    TXFRAIS = models.DecimalField(max_digits=10, decimal_places=2)
+    TXCOMMV = models.DecimalField(max_digits=10, decimal_places=2)
+    CLIMIN = models.IntegerField()
+    CLIMAX = models.IntegerField()
+    CLIATTR = models.CharField(max_length=255)
+    CLIENT = models.CharField(max_length=255)
+    ADRNO = models.CharField(max_length=255)
+    VILLE = models.CharField(max_length=255)
+    CONNECTE = models.CharField(max_length=255)
+    AGCPTA = models.CharField(max_length=255)
+    AGCOUR = models.CharField(max_length=255)
+    IMPRAVIS = models.CharField(max_length=255)
+    IMPRETAT = models.CharField(max_length=255)
+    IBATAVIS = models.CharField(max_length=255)
+    IBATETAT = models.CharField(max_length=255)
+    IBATREL = models.CharField(max_length=255)
+    IMPRMATR = models.CharField(max_length=255)
+    IBATMATR = models.CharField(max_length=255)
+    SYS_CREATED_BY = models.CharField(max_length=255)
+    SYS_UPDATED_DATE = models.DateTimeField()
+    SYS_UPDATED_BY = models.CharField(max_length=255)
+    SYS_VERSION_NUMBER = models.IntegerField()
+    SYS_CREATED_DATE = models.DateTimeField()
+    CLIAGP = models.CharField(max_length=255)
+    ID = models.AutoField(primary_key=True)
+
+    class Meta:
+        db_table = 'AGENCE'
+
+class DemChqDtl(models.Model):
+    CHECKBK_NOOPER = models.CharField(max_length=255)
+    CHECKBKNB = models.CharField(max_length=255)
+    REFER1 = models.CharField(max_length=255)
+    REFER2 = models.CharField(max_length=255)
+    STATUS = models.CharField(max_length=255)
+    STATUSDATE = models.DateField()
+    ID = models.AutoField(primary_key=True)
+    SYS_VERSION_NUMBER = models.IntegerField()
+    SYS_CREATED_DATE = models.DateField()
+    SYS_CREATED_BY = models.CharField(max_length=255)
+    SYS_UPDATED_DATE = models.DateField()
+    SYS_UPDATED_BY = models.CharField(max_length=255)
+    STATE = models.CharField(max_length=255)
+    VALIDE = models.CharField(max_length=255)
+    CIRMAN = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'DEMCHQDTL'                
 
 class DemChq(models.Model):
-    CLIENT = models.CharField(max_length=255)
+    CLIENT = models.ForeignKey(Client, on_delete=models.CASCADE, db_column='CLIENT')
+    #CLIENT = models.CharField(max_length=255)
     COMPTE = models.CharField(max_length=255)
     DEVISE = models.CharField(max_length=255)
     RESID = models.CharField(max_length=255)

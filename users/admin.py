@@ -7,32 +7,7 @@ from django import forms
 # Register your models here.
 admin.site.site_header = "chequeirs"
 
-class AgenceForm(forms.ModelForm):
-    class Meta:
-        model = Agence
-        fields = '__all__'
 
-class AgenceResource(resources.ModelResource):
-    class Meta:
-        model = Agence
-
-@admin.register(Agence)
-class AgenceAdmin(ImportExportModelAdmin):
-    resource_class = AgenceResource
-    search_fields = ['AGENCE']
-    list_display = ('id', 'AGENCE', 'AGENCELIB', 'TXFRAIS', 'TXCOMMV', 'CLIMAX', 'CLIATTR', 'CLIENT', 'ADRNO',
-                    'VILLE', 'CONNECTE', 'AGCPTA', 'AGCOUR', 'IMPRAVIS', 'IMPRETAT', 'IBATAVIS', 'IBATETAT',
-                    'IMPRMATR', 'IBATMATR', 'SYS_CREATED_BY', 'SYS_UPDATED_DATE', 'SYS_UPDATED_BY',
-                    'SYS_VERSION_NUMBER', 'SYS_CREATED_DATE', 'CLIAGP')
-    form = AgenceForm
-        # Rendre le champ 'id' éditable
-    readonly_fields = ('id',)
-    fieldsets = [
-        (None, {'fields': ('id', 'AGENCE', 'AGENCELIB', 'TXFRAIS', 'TXCOMMV', 'CLIMAX', 'CLIATTR', 'CLIENT', 'ADRNO',
-                            'VILLE', 'CONNECTE', 'AGCPTA', 'AGCOUR', 'IMPRAVIS', 'IMPRETAT', 'IBATAVIS', 'IBATETAT',
-                            'IMPRMATR', 'IBATMATR', 'SYS_CREATED_BY', 'SYS_UPDATED_DATE', 'SYS_UPDATED_BY',
-                            'SYS_VERSION_NUMBER', 'SYS_CREATED_DATE', 'CLIAGP')}),
-    ]
 
 class DemchqForm(forms.ModelForm):
     class Meta:
@@ -48,12 +23,7 @@ class DemchqAdmin(ImportExportModelAdmin):
     resource_class = DemchqResource
     search_fields = ['CLIENT']
 
-# Your import logic here, using agence_instance as needed
-@admin.register(Client)
-class ClientAdmin(ImportExportModelAdmin):
-   readonly_fields = ('id',)
-   search_fields = ['CODE_RACINE']
-   list_display = ('id','CODE_RACINE','CODE_AGENCE','NOM')
+
 
   
 class UserAdminConfig(admin.ModelAdmin):

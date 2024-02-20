@@ -17,6 +17,10 @@ import random
 from rest_framework.permissions import AllowAny
 from django.contrib.auth.hashers import make_password
 from django.core.mail import send_mail,EmailMessage
+from django.db.models import ExpressionWrapper
+from django.db.models import F
+from django.db.models import IntegerField
+from django.db.models import Value
 
 #-------------------login---------------------
 class InvalidInformationException(APIException):
@@ -150,3 +154,77 @@ class getChequeView(APIView):
         demchq = cheque.objects.all()
         serializer = chequeSerializer(demchq, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)      
+
+class AgenceListAPIView(APIView):
+    def get(self, request):
+        # Récupérez tous les documents
+        agence = Agence.objects.all()
+        serializer = AgenceSerializer(agence, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)   
+
+class ClientListAPIView(APIView):
+    def get(self, request):
+        # Récupérez tous les documents
+        client = Client.objects.all()
+        serializer = ClientSerializer(client, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)     
+
+class DemChqDtlListAPIView(APIView):
+    def get(self, request):
+        # Récupérez tous les documents
+        demChqDtl = DemChqDtl.objects.all()
+        serializer = DemChqDtlSerializer(demChqDtl, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)                
+        
+class MyDemChqListAPIView(generics.ListAPIView):
+    serializer_class = DemChqSerializer
+
+    def get_queryset(self):
+        return DemChq.objects.exclude(DATVALID__isnull=True)
+
+        
+
+##les cheques envoyer 
+class chequeEnvoyer(APIView):
+    def get(self, request):
+        # Récupérer les objets DemChq avec DATVALID non nul
+        dem_chqs = DemChq.objects.filter(DATVALID__isnull=False)
+
+        # Initialiser une liste pour stocker les résultats
+        results = []
+
+        # Boucler à travers les objets DemChq
+        for dem_chq in dem_chqs:
+            # Filtrer les objets DemChqDtl en fonction de l'objet DemChq actuel
+            dem_chqsdt = DemChqDtl.objects.filter(CHECKBK_NOOPER=dem_chq.NOOPER).first()
+            
+            # Vérifier si un objet DemChqDtl a été trouvé
+            if dem_chqsdt:
+                # Récupérer les valeurs de REFER1 et REFER2
+                refer1 = dem_chqsdt.REFER1
+                refer2 = dem_chqsdt.REFER2
+
+                # Calculer nbre_feuiles
+                nbre_feuiles = int(refer2) - int(refer1) + 1
+
+                # Créer un dictionnaire pour stocker les résultats
+                result = {
+                    'Nligne': dem_chq.id,
+                    'numero de compte': dem_chq.COMPTE,
+                    'code agence': dem_chq.CLIENT.CODE_AGENCE,
+                    'nbrchq': dem_chq.NBRCHQ,
+                    'nbre_feuiles': nbre_feuiles,
+                    'code_transaction': 1,  # Vous avez défini 1 comme valeur fixe
+                    'nom de client':dem_chq.CLIENT.NOM,
+                    'addresse': dem_chq.ADRL2,
+                    'code devise': 929,
+                    'code bank': 26,
+                    'code pays': 2,
+                    'numero de debut': refer1,
+                }
+
+                # Ajouter le dictionnaire à la liste des résultats
+                results.append(result)
+
+        # Retourner les résultats en tant que réponse JSON
+        return Response(results)

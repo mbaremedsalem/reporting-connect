@@ -73,3 +73,50 @@ class chequeSerializer(serializers.ModelSerializer):
         model = cheque
         # Remplacez 'direction' par 'direction_nom' dans les champs
         fields = ('id','numero_de_compte', 'code_agence', 'Nbre_carnet','Nbre_feuilles','code_transaction', 'nom_client', 'adresse','Code_Devise','code_bank','code_pays','numero_de_debut')        
+
+class DemChqSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DemChq
+        fields = '__all__'
+
+
+class MyDemChqSerializerizer(serializers.ModelSerializer):
+    class Meta:
+        model = DemChq
+        fields = ['id', 'COMPTE', 'DEVISE', 'NBRCHQ', 'ADRL1', 'REFER1', 'REFER2', 'DATVALID', 'CLIENT__NOM', 'AGENCE__CODE_AGENCE']
+
+class AgenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Agence
+        fields = '__all__'        
+
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = '__all__'  
+
+class DemChqDtlSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DemChqDtl
+        fields = '__all__'                 
+
+#super 
+class VotreSerializer(serializers.Serializer):
+    id = serializers.CharField()
+    compte = serializers.CharField()
+    client__code_agence = serializers.CharField()
+    nbrchq = serializers.IntegerField()
+    refer2 = serializers.CharField()
+    refer1 = serializers.CharField()
+    nbre_feuiles = serializers.IntegerField()
+    code_transaction = serializers.IntegerField()
+    libelle = serializers.CharField()
+    adrl1 = serializers.CharField()
+    datdem = serializers.DateField()
+    dateddem = serializers.DateField()
+    datredem = serializers.DateField()
+    datremcl = serializers.DateField()
+    datmaj = serializers.DateField()
+    client__nom = serializers.CharField()            
+
+        
