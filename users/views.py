@@ -1,5 +1,3 @@
-from django.shortcuts import render
-
 # Create your views here.
 from django.conf import settings
 from django.http import HttpResponse
@@ -10,7 +8,6 @@ from .serializers import *
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import generics, status
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from .models import *
 import random
@@ -21,6 +18,8 @@ from django.db.models import ExpressionWrapper
 from django.db.models import F
 from django.db.models import IntegerField
 from django.db.models import Value
+from rest_framework.permissions import IsAuthenticated
+
 
 #-------------------login---------------------
 class InvalidInformationException(APIException):
@@ -188,7 +187,7 @@ class MyDemChqListAPIView(generics.ListAPIView):
 class chequeEnvoyer(APIView):
     def get(self, request):
         # Récupérer les objets DemChq avec DATVALID non nul
-        dem_chqs = DemChq.objects.filter(DATVALID__isnull=False)
+        dem_chqs = DemChq.objects.filter(DATVALID__isnull=False,STATE='V')
 
         # Initialiser une liste pour stocker les résultats
         results = []
@@ -209,7 +208,6 @@ class chequeEnvoyer(APIView):
 
                 # Créer un dictionnaire pour stocker les résultats
                 result = {
-                    'Nligne': dem_chq.id,
                     'numero de compte': dem_chq.COMPTE,
                     'code agence': dem_chq.CLIENT.CODE_AGENCE,
                     'nbrchq': dem_chq.NBRCHQ,

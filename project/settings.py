@@ -11,9 +11,13 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from datetime import timedelta
-import os
 from pathlib import Path
+import os
+from dotenv import load_dotenv
+import requests
 
+
+load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -22,10 +26,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0gdjbhtzom$yu1^23k-tj%@n2)i5w_3$4iqrt9$e@v+0#2n2gj'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
@@ -33,7 +37,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'import_export',
-    #'django.contrib.admin',
+    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -55,9 +59,27 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users.middleware.SwitchDatabaseMiddleware', # Ajoutez votre middleware ici
 ]
+
+DATABASES = {
+    'default': {
+
+    },
+    'oracle': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+    },
+    'sqlite': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
 CORS_ALLOWED_ORIGINS = [
-    "http://192.168.10.15:81",  # Add your Angular app's origin
+    "http://localhost:4200",  # Add your Angular app's origin
     # You can add more origins as needed
 ]
 
@@ -88,12 +110,6 @@ WSGI_APPLICATION = 'project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-#DATABASES = {
-    #'default': {
-   #     'ENGINE': 'django.db.backends.sqlite3',
-  #      'NAME': BASE_DIR / 'db.sqlite3',
- #   }
-#}
 
 # DATABASES = {
 #     'default': {
@@ -105,27 +121,6 @@ WSGI_APPLICATION = 'project.wsgi.application'
 #         'PORT': '5432', 
 #     }
 # }
-
-#DATABASES = {
- #   'default': {
-    #    'ENGINE': 'django.db.backends.oracle',
-     #   'NAME': '192.168.11.11/EXPPRE', 
-      #  'USER': 'aubpre',
-       # 'PASSWORD': 'PRE_57',
-        #'PORT': '1521',
-    #}
-#}
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.oracle',
-        'NAME': '172.16.3.71:1521/TEST',
-        'USER': 'aubtst',
-        'PASSWORD': 'aub',        
-    }
-}
-
-
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'smtp.gmail.com'

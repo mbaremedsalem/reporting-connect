@@ -17,7 +17,7 @@ Role=(
 class UserAub(AbstractBaseUser,PermissionsMixin):
     firstname = models.CharField(max_length=50,blank=True)
     lastname = models.CharField(max_length=50,blank=True)
-    phone = models.CharField(max_length=16,unique=True)
+    phone = models.CharField(max_length=16)
     username = models.CharField(max_length=16,unique=True,null=True)
     email = models.EmailField(max_length=50,blank=True)
     post = models.CharField(max_length=200,null=True)
@@ -166,7 +166,7 @@ class DemChq(models.Model):
     XTOPE = models.CharField(max_length=255)
     EXPLVALID = models.CharField(max_length=255)
     DATVALID = models.DateField()
-    NOOPER = models.CharField(max_length=255)
+    NOOPER = models.CharField(max_length=255,primary_key=True)
     DADRNO = models.CharField(max_length=255)
     DADRNAT = models.CharField(max_length=255)
     DADRL1 = models.CharField(max_length=255)
