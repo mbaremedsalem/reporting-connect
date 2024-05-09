@@ -224,4 +224,22 @@ class cheque(models.Model):
 
 
 
+class Archive(models.Model):
+    numero_de_compte = models.CharField(max_length=100)
+    code_agence = models.CharField(max_length=100)
+    nbrchq = models.IntegerField()
+    nbre_feuiles = models.IntegerField()
+    code_transaction = models.IntegerField(default=1)
+    nom_de_client = models.CharField(max_length=100)
+    addresse = models.CharField(max_length=255)
+    status = models.CharField(max_length=100)
+    code_devise = models.IntegerField(default=929)
+    code_bank = models.CharField(max_length=10, default='00026')
+    code_pays = models.CharField(max_length=2, default='02')
+    numero_de_debut = models.CharField(max_length=10)
+
+    class Meta:
+        verbose_name_plural = 'Archives'
+
+
 
