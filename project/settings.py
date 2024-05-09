@@ -62,27 +62,22 @@ MIDDLEWARE = [
     'users.middleware.SwitchDatabaseMiddleware', # Ajoutez votre middleware ici
 ]
 
-# DATABASES = {
-#     'default': {
-
-#     },
-#     'oracle': {
-#         'ENGINE': 'django.db.backends.oracle',
-#         'NAME': os.environ.get('DATABASE_NAME'),
-#         'USER': os.environ.get('DATABASE_USER'),
-#         'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
-#     },
-#     'sqlite': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
 DATABASES = {
     'default': {
+
+    },
+    'oracle': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': os.environ.get('DATABASE_NAME'),
+        'USER': os.environ.get('DATABASE_USER'),
+        'PASSWORD': os.environ.get('DATABASE_PASSWORD'),
+    },
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",  # Add your Angular app's origin
     # You can add more origins as needed
