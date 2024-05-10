@@ -19,7 +19,7 @@ from django.db.models import F
 from django.db.models import IntegerField
 from django.db.models import Value
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework.pagination import PageNumberPagination
 
 #-------------------login---------------------
 class InvalidInformationException(APIException):
@@ -184,7 +184,59 @@ class MyDemChqListAPIView(generics.ListAPIView):
         
 
 ##les cheques envoyer 
-class chequeEnvoyer(APIView):
+
+
+class ChequeEnvoyer(APIView):
+    def get(self, request):
+        # Récupérer les objets DemChq avec DATVALID non nul
+        dem_chqs = DemChq.objects.filter(DATEDDEM__isnull=False,DATREMCL__isnull=True)
+
+        # Initialiser une liste pour stocker les résultats
+        results = []
+
+        # Boucler à travers les objets DemChq
+        for dem_chq in dem_chqs:
+            # Filtrer les objets DemChqDtl en fonction de l'objet DemChq actuel
+            dem_chqsdt = DemChqDtl.objects.filter(CHECKBK_NOOPER=dem_chq.NOOPER,STATE='V',STATUS='ST').first()
+            
+            # Vérifier si un objet DemChqDtl a été trouvé
+            if dem_chqsdt:
+                # Récupérer les valeurs de REFER1 et REFER2
+                refer1 = dem_chqsdt.REFER1
+                refer2 = dem_chqsdt.REFER2
+                status = dem_chqsdt.STATUS 
+                # Calculer nbre_feuiles
+                nbre_feuiles = int(refer2) - int(refer1) + 1
+
+                # Créer un dictionnaire pour stocker les résultats
+                result = {
+                    'numero_de_compte': dem_chq.COMPTE,
+                    'code_agence': dem_chq.CLIENT.CODE_AGENCE,
+                    'nbrchq': dem_chq.NBRCHQ,
+                    'nbre_feuiles': nbre_feuiles,
+                    'code_transaction': 1,  
+                    'nom_de_client': dem_chq.CLIENT.NOM,
+                    'addresse': dem_chq.ADRL2,
+                    'status': dem_chqsdt.STATUS,
+                    'code_devise': 929,
+                    'code_bank': '00026',
+                    'code_pays': str('02'),
+                    'numero_de_debut': '000' + refer1,
+                }
+
+                # Ajouter le dictionnaire à la liste des résultats
+                results.append(result)
+
+        # Pagination des résultats
+        paginator = PageNumberPagination()
+        paginator.page_size = 6
+        paginated_results = paginator.paginate_queryset(results, request)
+
+        # Retourner les résultats paginés en tant que réponse JSON
+        return paginator.get_paginated_response(paginated_results)
+
+#------ generer un fichier excel -------
+class chequeEnvoyerExecel(APIView):
     def get(self, request):
         # Récupérer les objets DemChq avec DATVALID non nul
         dem_chqs = DemChq.objects.filter(DATVALID__isnull=False,STATE='V')
@@ -195,7 +247,7 @@ class chequeEnvoyer(APIView):
         # Boucler à travers les objets DemChq
         for dem_chq in dem_chqs:
             # Filtrer les objets DemChqDtl en fonction de l'objet DemChq actuel
-            dem_chqsdt = DemChqDtl.objects.filter(CHECKBK_NOOPER=dem_chq.NOOPER).first()
+            dem_chqsdt = DemChqDtl.objects.filter(CHECKBK_NOOPER=dem_chq.NOOPER,STATE='V',STATUS='ST').first()
             
             # Vérifier si un objet DemChqDtl a été trouvé
             if dem_chqsdt:
@@ -226,3 +278,10 @@ class chequeEnvoyer(APIView):
 
         # Retourner les résultats en tant que réponse JSON
         return Response(results)
+
+class ArchiveListAPIView(generics.ListAPIView):
+    def get(self, request):
+        # Récupérez tous les documents
+        archive = Archive.objects.all()
+        serializer = ArchiveSerializer(archive, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)        

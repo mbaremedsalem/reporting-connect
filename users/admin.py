@@ -88,3 +88,38 @@ class chequeAdmin(ImportExportModelAdmin):
                 'numero_de_debut' 
                             )}),
     ]
+
+class ArchiveResource(resources.ModelResource):
+    class Meta:
+        model = Archive
+
+class archiveForm(forms.ModelForm):
+    class Meta:
+        model = Archive
+        fields = '__all__'
+
+@admin.register(Archive)
+class ArchiveAdmin(ImportExportModelAdmin):
+    resource_class =  ArchiveResource
+
+    search_fields = ['numero_de_compte']
+    list_display = ('id','numero_de_compte' ,'code_agence' ,'nbrchq' ,'nbre_feuiles',  
+                'code_transaction' ,'nom_de_client', 'addresse', 'status' ,'code_bank' ,'code_pays' ,
+                'numero_de_debut' 
+                    )
+    form = archiveForm
+        # Rendre le champ 'id' éditable
+    readonly_fields = ('id',)
+    fieldsets = [
+        (None, {'fields': ('id','numero_de_compte' ,'code_agence' ,'nbrchq' ,'nbre_feuiles',  
+                'code_transaction' ,'nom_de_client', 'addresse', 'status' ,'code_bank' ,'code_pays' ,
+                'numero_de_debut' 
+                            )}),
+    ]
+    readonly_fields = ('id',)
+    fieldsets = [
+        (None, {'fields': ('id','numero_de_compte' ,'code_agence' ,'nbrchq' ,'nbre_feuiles',  
+                'code_transaction' ,'nom_de_client', 'addresse', 'status' ,'code_bank' ,'code_pays' ,
+                'numero_de_debut' 
+                            )}),
+    ]    

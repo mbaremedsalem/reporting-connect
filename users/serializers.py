@@ -100,6 +100,10 @@ class DemChqDtlSerializer(serializers.ModelSerializer):
         model = DemChqDtl
         fields = '__all__'                 
 
+class ArchiveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Archive
+        fields = '__all__'    
 #super 
 class VotreSerializer(serializers.Serializer):
     id = serializers.CharField()
