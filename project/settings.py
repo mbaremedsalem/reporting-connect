@@ -36,6 +36,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'import_export',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -77,6 +78,7 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",  # Add your Angular app's origin
@@ -124,11 +126,18 @@ WSGI_APPLICATION = 'project.wsgi.application'
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = 'smtp.gmail.com'
+#Production
+#EMAIL_HOST_USER = 'ghassem@aub.mr'
+#EMAIL_HOST_PASSWORD = 'fobz vmhk xnak qlkp'
+#EMAIL_USE_SSL = True
+#EMAIL_PORT = '465'
+
+
+#Test
 EMAIL_HOST_USER = 'mbaremedsalemmbare@gmail.com'
 EMAIL_HOST_PASSWORD = 'whba eakr algq ybtr'
 EMAIL_USE_TLS = True
 EMAIL_PORT = '587'
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators

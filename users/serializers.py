@@ -2,10 +2,16 @@ from .models import *
 from rest_framework import serializers 
 from django.contrib.auth import authenticate
 #--------------user serializer-------------
+class UserAubSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserAub
+        fields = ['firstname', 'lastname', 'phone', 'username', 'email', 'post', 'code_agence']
+        read_only_fields = ['username']
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model= UserAub
-        fields= ('firstname','username','lastname','post','email','phone')
+        fields= ('firstname','username','lastname','post','code_agence','email','phone')
 
 #--------------login---------------------
 class MyTokenObtainPairSerializer(serializers.Serializer):
@@ -41,12 +47,11 @@ class MyTokenObtainPairSerializer(serializers.Serializer):
         
 
 
-
 ## register Etudiant 
 class RegisterCaissierSerializer(serializers.ModelSerializer):
     class Meta:
         model = Caissier
-        fields = ('id', 'phone','firstname','lastname','username','post','email', 'password','role')
+        fields = ('id', 'phone','firstname','lastname','username','post','email','code_agence','password','role')
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -54,7 +59,7 @@ class RegisterCaissierSerializer(serializers.ModelSerializer):
 class RegisterChefAgenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChefAgence
-        fields = ('id', 'phone','firstname','lastname','username','post','email', 'password','role')
+        fields = ('id', 'phone','firstname','lastname','username','post','email','code_agence','password','role')
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -72,7 +77,7 @@ class chequeSerializer(serializers.ModelSerializer):
     class Meta:
         model = cheque
         # Remplacez 'direction' par 'direction_nom' dans les champs
-        fields = ('id','numero_de_compte', 'code_agence', 'Nbre_carnet','Nbre_feuilles','code_transaction', 'nom_client', 'adresse','Code_Devise','code_bank','code_pays','numero_de_debut')        
+        fields = ('id','numero_de_compte', 'code_agence','Nbre_carnet','Nbre_feuilles','code_transaction', 'nom_client', 'adresse','Code_Devise','code_bank','code_pays','numero_de_debut')        
 
 class DemChqSerializer(serializers.ModelSerializer):
     class Meta:

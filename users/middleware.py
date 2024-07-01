@@ -1,3 +1,4 @@
+import re
 from django.db import connections
 from django.http import HttpRequest
 
@@ -10,8 +11,11 @@ class SwitchDatabaseMiddleware:
         path = request.path
 
         # Déterminer quelle base de données utiliser en fonction de l'endpoint demandé
-        if path in ['/users/login/', '/users/register/','/users/password/','/users/get-archive/'] or path.startswith('/admin/'):
-            # Utiliser la base de données SQLite par défaut pour les endpoints login/ et register/ et admin/*
+        if path in ['/users/login/', '/users/register/', '/users/password/','/users/get-archive/', '/users/send_all_email/'] or \
+           path.startswith('/admin/') or \
+           re.match(r'^/users/update-profile/[^/]+/$', path) or \
+           re.match(r'^/users/send_email/[^/]+/$', path):
+            # Utiliser la base de données SQLite par défaut pour ces endpoints
             using_db = 'sqlite'
         else:
             # Utiliser la base de données Oracle par défaut pour les autres endpoints
@@ -23,5 +27,3 @@ class SwitchDatabaseMiddleware:
         connections['default'].ensure_connection()  # Réouvrir la connexion
 
         return self.get_response(request)
-
-

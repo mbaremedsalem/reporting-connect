@@ -13,6 +13,10 @@ Role=(
     ('Caissier', 'Caissier'),
     ('ChefAgence', 'ChefAgence'),
 )  
+Agence=(
+    ('00001', '00001'),
+    ('00002', '00002'),
+) 
 
 class UserAub(AbstractBaseUser,PermissionsMixin):
     firstname = models.CharField(max_length=50,blank=True)
@@ -20,8 +24,9 @@ class UserAub(AbstractBaseUser,PermissionsMixin):
     phone = models.CharField(max_length=16)
     username = models.CharField(max_length=16,unique=True,null=True)
     email = models.EmailField(max_length=50,blank=True)
+    code_agence = models.CharField(max_length=30, choices=Agence, default='00001')
     post = models.CharField(max_length=200,null=True)
-    role= models.CharField(max_length=30, choices=Role, default='Caissier')
+    role= models.CharField(max_length=30, choices=Role, default=' ')
     is_active = models.BooleanField(default=True)
     verified = models.BooleanField(default=False)
     restricted = models.BooleanField(default=False)
@@ -227,19 +232,16 @@ class cheque(models.Model):
 class Archive(models.Model):
     numero_de_compte = models.CharField(max_length=100)
     code_agence = models.CharField(max_length=100)
-    nbrchq = models.IntegerField()
-    nbre_feuiles = models.IntegerField()
+    nbrchq = models.IntegerField(null=True, blank=True)
+    nbre_feuiles = models.IntegerField(null=True, blank=True)
     code_transaction = models.IntegerField(default=1)
     nom_de_client = models.CharField(max_length=100)
-    addresse = models.CharField(max_length=255)
-    status = models.CharField(max_length=100)
+    addresse = models.CharField(max_length=255,null=True, blank=True)
+    status = models.CharField(max_length=100,null=True, blank=True)
     code_devise = models.IntegerField(default=929)
     code_bank = models.CharField(max_length=10, default='00026')
     code_pays = models.CharField(max_length=2, default='02')
     numero_de_debut = models.CharField(max_length=10)
 
     class Meta:
-        verbose_name_plural = 'Archives'
-
-
-
+        verbose_name_plural = 'Archive'
